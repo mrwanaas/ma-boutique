@@ -49,6 +49,12 @@ img{max-width:100%;height:auto;display:block}
 select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
 textarea.form-input{resize:vertical;min-height:88px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:12px;cursor:pointer;transition:.25s}
+.toggle-track::after{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s}
+.toggle input:checked+.toggle-track{background:var(--gold)}
+.toggle input:checked+.toggle-track::after{transform:translateX(20px)}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)}
 .overlay.open{display:flex}
 .modal{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;animation:slideUp .25s}
@@ -77,7 +83,9 @@ textarea.form-input{resize:vertical;min-height:88px}
 .card-body{padding:20px}
 .card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600}
 .card-desc{color:var(--muted);font-size:13px;margin:6px 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card-stock{font-size:11px;margin-top:4px}
+.card-stock{font-size:11px;margin-top:4px;color:var(--muted)}
+.card-stock.in-stock{color:var(--s-delivered)}
+.card-stock.out-stock{color:var(--s-cancelled)}
 .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 .card-price{font-size:1.3rem;font-weight:700;color:var(--gold)}
 .star{color:var(--gold)}.star.empty{color:var(--border2)}
@@ -87,16 +95,49 @@ textarea.form-input{resize:vertical;min-height:88px}
 .category-chip.active{background:var(--gold);color:#000;border-color:var(--gold)}
 .order-layout{max-width:1100px;margin:40px auto;padding:0 24px;display:grid;grid-template-columns:1fr 480px;gap:40px}
 .cart-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:center}
-.cart-item-img{width:60px;height:60px;border-radius:8px;object-fit:cover;background:var(--surface)}
+.cart-item-img{width:60px;height:60px;border-radius:8px;object-fit:cover}
 .cart-item-details{flex:1}
 .cart-item-title{font-weight:600}
 .cart-item-price{color:var(--gold);font-size:14px}
-.cart-qty-btn{width:28px;height:28px;background:var(--card2);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-.price-row{display:flex;justify-content:space-between;padding:12px 0}
-.price-row.total{font-weight:700;font-size:1.2rem;color:var(--gold);border-top:1px solid var(--border);margin-top:8px}
+.cart-qty-btn{width:28px;height:28px;background:var(--card2);border:1px solid var(--border);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.qty-row{display:flex;align-items:center;gap:8px}
+.qty-btn{width:32px;height:32px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;cursor:pointer;font-size:16px}
+.qty-val{font-weight:600;min-width:32px;text-align:center}
+.price-box{background:var(--surface);border-radius:var(--r);overflow:hidden}
+.price-row{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.price-row.total{font-weight:700;font-size:1.2rem;color:var(--gold);border-bottom:none}
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px}
+.order-card-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;margin-bottom:22px}
 .admin-order-detail{background:var(--surface);border-radius:var(--r);padding:20px;margin-top:16px}
 .admin-order-detail h4{margin-bottom:12px;color:var(--gold)}
-@media(max-width:860px){.order-layout{grid-template-columns:1fr}}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th,.data-table td{padding:12px;text-align:left;border-bottom:1px solid var(--border)}
+.data-table th{color:var(--muted);font-size:12px;font-weight:600}
+.tbl-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover}
+.admin-topbar{background:var(--surface);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;gap:14px}
+.admin-topbar-logo{font-family:'Playfair Display',serif;color:var(--gold);font-weight:700}
+.admin-badge{background:var(--gold-glow);color:var(--gold);border-radius:6px;padding:2px 8px;font-size:10px}
+.admin-tabs-bar{display:flex;gap:8px;padding:0 24px;border-bottom:1px solid var(--border)}
+.admin-tab{background:none;border:none;padding:12px 16px;color:var(--muted);font-weight:600;cursor:pointer;border-bottom:2px solid transparent}
+.admin-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.admin-body{padding:24px;max-width:1200px;margin:0 auto}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.settings-block{background:var(--card);border-radius:var(--r-lg);padding:24px;margin-bottom:20px}
+.settings-block-title{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:16px}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;margin-bottom:16px}
+.upload-zone:hover{border-color:var(--gold)}
+.uploaded-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;margin-top:16px}
+.img-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer}
+.img-item.main{border-color:var(--gold)}
+.img-item img{width:100%;height:100%;object-fit:cover}
+.img-remove{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);border:none;border-radius:50%;color:#fff;width:20px;height:20px;font-size:12px;cursor:pointer}
+.img-main-tag{position:absolute;bottom:4px;left:4px;background:var(--gold);color:#000;font-size:9px;padding:2px 5px;border-radius:4px}
+.thanks-check{width:80px;height:80px;background:rgba(52,211,153,.1);border:2px solid var(--s-delivered);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px}
+.thanks-title{font-family:'Playfair Display',serif;font-size:1.8rem;text-align:center;margin-bottom:12px}
+.thanks-id{background:var(--card);border:1px solid rgba(201,168,76,.3);border-radius:10px;padding:12px 24px;text-align:center;font-family:monospace;margin:20px auto;width:fit-content}
+.thanks-msg{text-align:center;color:var(--muted);margin-bottom:24px}
+@media(max-width:860px){.order-layout{grid-template-columns:1fr}.filter-bar{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -120,7 +161,7 @@ textarea.form-input{resize:vertical;min-height:88px}
   </div>
   <div class="collection">
     <div class="filter-bar">
-      <input type="text" id="search-input" class="form-input search-input" placeholder="Rechercher un produit...">
+      <input type="text" id="search-input" class="form-input search-input" placeholder="Rechercher un produit..." oninput="App.renderStore()">
       <div id="categories-list" style="display:flex;gap:8px;flex-wrap:wrap"></div>
     </div>
     <div class="products-grid" id="products-grid"></div>
@@ -187,19 +228,79 @@ textarea.form-input{resize:vertical;min-height:88px}
 </div>
 
 <!-- THANKS VIEW -->
-<div class="view" id="view-thanks"><div class="thanks-check">✓</div><div class="thanks-title">Commande confirmée !</div><div class="thanks-id" id="thanks-id"></div><p class="thanks-msg" id="thanks-msg"></p><button class="btn btn-secondary" onclick="App.showStore()">Continuer</button></div>
+<div class="view" id="view-thanks">
+  <div style="max-width:500px;margin:80px auto;text-align:center">
+    <div class="thanks-check">✓</div>
+    <div class="thanks-title">Commande confirmée !</div>
+    <div class="thanks-id" id="thanks-id"></div>
+    <p class="thanks-msg" id="thanks-msg"></p>
+    <button class="btn btn-secondary" onclick="App.showStore()">Continuer les achats</button>
+  </div>
+</div>
 
-<!-- ADMIN LOGIN & ADMIN PANEL (compacted but fully functional) -->
-<div class="view" id="view-admin-login"><div class="login-card"><div class="login-logo">Boutique</div><div class="login-title">Admin</div><input class="form-input" type="password" id="admin-pw-in" placeholder="Mot de passe"><button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="Admin.login()">Connexion</button><button class="btn btn-ghost" style="margin-top:12px" onclick="App.showStore()">Retour</button></div></div>
-<div class="view" id="view-admin"><div class="admin-topbar"><div class="admin-topbar-logo">Boutique</div><span class="admin-badge">Admin</span><div style="margin-left:auto;display:flex;gap:8px"><span id="fb-status"></span><button class="btn btn-ghost btn-sm" onclick="App.showStore()">Boutique</button><button class="btn btn-secondary btn-sm" onclick="Admin.logout()">Déconnexion</button></div></div><div class="admin-tabs-bar"><button class="admin-tab active" onclick="Admin.tab('orders')">Commandes</button><button class="admin-tab" onclick="Admin.tab('products')">Produits</button><button class="admin-tab" onclick="Admin.tab('cities')">Villes</button><button class="admin-tab" onclick="Admin.tab('settings')">Paramètres</button></div><div class="admin-body"><div id="tab-orders" class="tab-panel active"><div id="orders-admin-list"></div></div><div id="tab-products" class="tab-panel"><button class="btn btn-primary btn-sm" onclick="Admin.openProductModal()">+ Nouveau produit</button><div id="products-admin-list" style="margin-top:16px"></div></div><div id="tab-cities" class="tab-panel"><button class="btn btn-primary btn-sm" onclick="Admin.openCityModal()">+ Ville</button><div id="cities-admin-list" style="margin-top:16px"></div></div><div id="tab-settings" class="tab-panel"><div class="settings-block"><div class="settings-block-title">Firebase</div><textarea id="s-fb-config" rows="4" class="form-input" placeholder='{"apiKey":"..."}'></textarea><button class="btn btn-primary btn-sm" onclick="Admin.connectFirebase()">Connecter</button></div><div class="settings-block"><div class="settings-block-title">Boutique</div><input class="form-input" id="s-name" placeholder="Nom"><input class="form-input" id="s-currency" placeholder="DZD"><button class="btn btn-primary btn-sm" onclick="Admin.saveStore()">Enregistrer</button></div></div></div></div></div>
+<!-- ADMIN LOGIN -->
+<div class="view" id="view-admin-login">
+  <div class="login-card" style="max-width:380px;margin:100px auto;background:var(--card);border-radius:var(--r-xl);padding:40px">
+    <div class="login-logo" style="font-family:'Playfair Display';font-size:1.5rem;color:var(--gold);margin-bottom:20px">Boutique</div>
+    <div class="login-title">Espace Admin</div>
+    <input class="form-input" type="password" id="admin-pw-in" placeholder="Mot de passe">
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="Admin.login()">Connexion</button>
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="App.showStore()">Retour à la boutique</button>
+  </div>
+</div>
 
-<!-- PRODUCT MODAL (with stock & category) -->
-<div class="overlay" id="product-overlay"><div class="modal"><div class="modal-title" id="pm-title">Produit</div><input type="hidden" id="pm-id"><div class="form-row"><div class="form-group"><label class="form-label">Titre</label><input class="form-input" id="pm-title-field"></div><div class="form-group"><label class="form-label">Prix</label><input class="form-input" type="number" id="pm-price"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Stock</label><input class="form-input" type="number" id="pm-stock" value="0"></div><div class="form-group"><label class="form-label">Catégorie</label><input class="form-input" id="pm-category" placeholder="ex: Électronique"></div></div><div class="form-group"><label class="form-label">Description</label><textarea class="form-input" id="pm-desc"></textarea></div><div class="form-group"><label>Photos</label><div class="upload-zone" id="upload-zone"><input type="file" id="file-input" accept="image/*" multiple><div class="upload-icon">📸</div><div class="upload-text">Ajouter des photos</div></div><div class="uploaded-grid" id="uploaded-grid"></div></div><div class="form-group"><label class="toggle"><input type="checkbox" id="pm-active" checked><div class="toggle-track"></div></label><span>Visible</span></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeOv('product-overlay')">Annuler</button><button class="btn btn-primary" onclick="Admin.saveProduct()">Enregistrer</button></div></div></div>
-<div class="overlay" id="city-overlay"><div class="modal"><div class="modal-title">Ville</div><input type="hidden" id="cm-id"><input class="form-input" id="cm-name" placeholder="Nom"><input class="form-input" type="number" id="cm-price" placeholder="Frais"><div class="modal-footer"><button class="btn btn-secondary" onclick="closeOv('city-overlay')">Annuler</button><button class="btn btn-primary" onclick="Admin.saveCity()">Enregistrer</button></div></div></div>
-<div class="overlay" id="order-detail-overlay"><div class="modal" style="max-width:500px"><div class="modal-title">Détails de la commande</div><div id="order-detail-content"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeOv('order-detail-overlay')">Fermer</button></div></div></div>
+<!-- ADMIN PANEL -->
+<div class="view" id="view-admin">
+  <div class="admin-topbar">
+    <div class="admin-topbar-logo">Boutique</div>
+    <span class="admin-badge">Admin</span>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <span id="fb-status"></span>
+      <button class="btn btn-ghost btn-sm" onclick="App.showStore()">Boutique</button>
+      <button class="btn btn-secondary btn-sm" onclick="Admin.logout()">Déconnexion</button>
+    </div>
+  </div>
+  <div class="admin-tabs-bar">
+    <button class="admin-tab active" onclick="Admin.tab('orders')">Commandes</button>
+    <button class="admin-tab" onclick="Admin.tab('products')">Produits</button>
+    <button class="admin-tab" onclick="Admin.tab('cities')">Villes</button>
+    <button class="admin-tab" onclick="Admin.tab('settings')">Paramètres</button>
+  </div>
+  <div class="admin-body">
+    <div id="tab-orders" class="tab-panel active"><div id="orders-admin-list"></div></div>
+    <div id="tab-products" class="tab-panel"><button class="btn btn-primary btn-sm" onclick="Admin.openProductModal()">+ Nouveau produit</button><div id="products-admin-list" style="margin-top:16px"></div></div>
+    <div id="tab-cities" class="tab-panel"><button class="btn btn-primary btn-sm" onclick="Admin.openCityModal()">+ Ajouter ville</button><div id="cities-admin-list" style="margin-top:16px"></div></div>
+    <div id="tab-settings" class="tab-panel">
+      <div class="settings-block"><div class="settings-block-title">🔥 Firebase</div><textarea id="s-fb-config" rows="4" class="form-input" placeholder='{"apiKey":"...","databaseURL":"..."}'></textarea><button class="btn btn-primary btn-sm" onclick="Admin.connectFirebase()">Connecter Firebase</button></div>
+      <div class="settings-block"><div class="settings-block-title">🏪 Boutique</div><input class="form-input" id="s-name" placeholder="Nom de la boutique"><input class="form-input" id="s-currency" placeholder="Devise (DZD)"><button class="btn btn-primary btn-sm" onclick="Admin.saveStore()">Enregistrer</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="overlay" id="product-overlay">
+  <div class="modal"><div class="modal-title" id="pm-title">Produit</div><input type="hidden" id="pm-id">
+    <div class="form-row"><div class="form-group"><label class="form-label">Titre</label><input class="form-input" id="pm-title-field"></div><div class="form-group"><label class="form-label">Prix</label><input class="form-input" type="number" id="pm-price"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Stock</label><input class="form-input" type="number" id="pm-stock" value="0"></div><div class="form-group"><label class="form-label">Catégorie</label><input class="form-input" id="pm-category" placeholder="ex: Électronique"></div></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-input" id="pm-desc" rows="3"></textarea></div>
+    <div class="form-group"><label>Photos</label><div class="upload-zone" id="upload-zone"><input type="file" id="file-input" accept="image/*" multiple><div class="upload-icon">📸</div><div class="upload-text">Ajouter des photos</div></div><div class="uploaded-grid" id="uploaded-grid"></div></div>
+    <div class="form-group"><label class="toggle"><input type="checkbox" id="pm-active" checked><div class="toggle-track"></div></label><span>Visible sur la boutique</span></div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeOv('product-overlay')">Annuler</button><button class="btn btn-primary" onclick="Admin.saveProduct()">Enregistrer</button></div>
+  </div>
+</div>
+
+<!-- CITY MODAL -->
+<div class="overlay" id="city-overlay">
+  <div class="modal"><div class="modal-title">Ville</div><input type="hidden" id="cm-id"><input class="form-input" id="cm-name" placeholder="Nom de la ville"><input class="form-input" type="number" id="cm-price" placeholder="Frais de livraison"><div class="modal-footer"><button class="btn btn-secondary" onclick="closeOv('city-overlay')">Annuler</button><button class="btn btn-primary" onclick="Admin.saveCity()">Enregistrer</button></div></div>
+</div>
+
+<!-- ORDER DETAIL OVERLAY (admin) -->
+<div class="overlay" id="order-detail-overlay">
+  <div class="modal" style="max-width:500px"><div class="modal-title">Détails de la commande</div><div id="order-detail-content"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeOv('order-detail-overlay')">Fermer</button></div></div>
+</div>
 
 <script>
-// EMBEDDED FIREBASE CONFIG (replace with your own)
+// ==================== EMBEDDED FIREBASE CONFIG (your credentials) ====================
 const EMBEDDED_FIREBASE_CONFIG = {
   apiKey: "AIzaSyCG_wkofE0Eya6KwgecjRyGr1q1EvA0jVM",
   authDomain: "myshop-a820b.firebaseapp.com",
@@ -224,7 +325,7 @@ const FireSync = { _db:null, _listeners:{},
 };
 function setupListeners(){
   FireSync.listen('products',()=>{ App.renderStore(); if(document.getElementById('tab-products')?.classList.contains('active')) Admin.renderProducts(); });
-  FireSync.listen('cities',()=>{ if(document.getElementById('tab-cities')?.classList.contains('active')) Admin.renderCities(); });
+  FireSync.listen('cities',()=>{ if(document.getElementById('tab-cities')?.classList.contains('active')) Admin.renderCities(); Cart.updateCheckoutCities?.(); });
   FireSync.listen('orders',()=>{ if(document.getElementById('tab-orders')?.classList.contains('active')) Admin.renderOrders(); Cart.updateUI?.(); });
   FireSync.listen('settings',()=>{ App.applySettings(); });
 }
@@ -251,13 +352,14 @@ const Cart = {
   items: [],
   load(){ const saved=localStorage.getItem('cart'); this.items=saved?JSON.parse(saved):[]; this.updateUI(); },
   save(){ localStorage.setItem('cart',JSON.stringify(this.items)); this.updateUI(); },
-  add(productId){ let p=DB.get('products',[]).find(p=>p.id===productId); if(!p)return; if(p.stock<=0){ toast('Rupture de stock','error'); return; } let existing=this.items.find(i=>i.productId===productId); if(existing){ if(existing.quantity+1>p.stock){ toast('Stock max atteint','error'); return; } existing.quantity++; } else { this.items.push({productId, title:p.title, price:p.price, quantity:1, image:p.images?.[0]||null}); } this.save(); toast('Ajouté au panier'); },
+  add(productId){ let p=DB.get('products',[]).find(p=>p.id===productId); if(!p)return; if(p.stock<=0){ toast('Rupture de stock','error'); return; } let existing=this.items.find(i=>i.productId===productId); if(existing){ if(existing.quantity+1>p.stock){ toast('Stock maximum atteint','error'); return; } existing.quantity++; } else { this.items.push({productId, title:p.title, price:p.price, quantity:1, image:p.images?.[0]||null}); } this.save(); toast('Ajouté au panier'); },
   remove(idx){ this.items.splice(idx,1); this.save(); },
   updateQty(idx,delta){ let item=this.items[idx]; let p=DB.get('products',[]).find(p=>p.id===item.productId); if(!p)return; let newQty=item.quantity+delta; if(newQty<1){ this.remove(idx); return; } if(newQty>p.stock){ toast('Stock insuffisant','error'); return; } item.quantity=newQty; this.save(); },
   updateUI(){ let count=this.items.reduce((s,i)=>s+i.quantity,0); let el=document.getElementById('cart-count'); if(el)el.innerText=count; let container=document.getElementById('cart-items-list'); if(!container)return; if(this.items.length===0){ container.innerHTML='<div class="empty">🛒 Votre panier est vide</div>'; document.getElementById('cart-summary').innerHTML=''; return; } let html='<div class="table-wrap"><table class="data-table"><thead><tr><th>Produit</th><th>Qté</th><th>Prix</th><th>Total</th><th></th></tr></thead><tbody>'; let subtotal=0; this.items.forEach((item,i)=>{ let tot=item.price*item.quantity; subtotal+=tot; html+=`<tr><td><div style="display:flex;gap:8px;align-items:center">${item.image?`<img src="${item.image}" style="width:40px;height:40px;border-radius:6px">`:'📦'} ${item.title}</div></td><td><div class="qty-row"><button class="qty-btn" onclick="Cart.updateQty(${i},-1)">-</button><span class="qty-val">${item.quantity}</span><button class="qty-btn" onclick="Cart.updateQty(${i},1)">+</button></div></td><td>${fmt(item.price)}</td><td>${fmt(tot)}</td><td><button class="btn-ghost" onclick="Cart.remove(${i})">🗑️</button></td></tr>`; }); html+=`</tbody></table></div>`; container.innerHTML=html; document.getElementById('cart-summary').innerHTML=`<div class="price-row"><span>Sous-total</span><span>${fmt(subtotal)}</span></div><div class="price-row"><span>Livraison</span><span id="cart-delivery-preview">—</span></div><div class="price-row total"><span>Total</span><span id="cart-total-preview">${fmt(subtotal)}</span></div>`; },
   toggle(){ this.updateUI(); openOv('cart-overlay'); },
   close(){ closeOv('cart-overlay'); },
-  async checkout(){ if(this.items.length===0){ toast('Panier vide','error'); return; } window._checkoutCart=[...this.items]; App.showCheckout(); this.close(); },
+  checkout(){ if(this.items.length===0){ toast('Panier vide','error'); return; } window._checkoutCart=[...this.items]; App.showCheckout(); this.close(); },
+  updateCheckoutCities(){ let cities=DB.get('cities',[]); let sel=document.getElementById('ch-city'); if(sel) sel.innerHTML='<option value="">— Sélectionnez —</option>'+cities.map(c=>`<option value="${c.id}" data-price="${c.price}">${c.name} (${fmt(c.price)})</option>`).join(''); },
   async confirmOrder(){ let fn=document.getElementById('ch-fn').value.trim(); let ln=document.getElementById('ch-ln').value.trim(); let phone=document.getElementById('ch-phone').value.trim(); let citySel=document.getElementById('ch-city'); if(!fn||!ln||!phone||!citySel.value){ toast('Veuillez remplir tous les champs obligatoires','error'); return; } let cities=DB.get('cities',[]); let city=cities.find(c=>c.id===citySel.value); if(!city){ toast('Ville invalide','error'); return; } let cartItems=window._checkoutCart||[]; if(cartItems.length===0){ toast('Panier vide','error'); return; } let subtotal=cartItems.reduce((s,i)=>s+i.price*i.quantity,0); let total=subtotal+city.price; let order={ id:genOID(), date:fmtDate(), customerName:fn+' '+ln, phone, city:city.name, cityDelivery:city.price, address:document.getElementById('ch-addr').value.trim(), items:cartItems.map(i=>({productId:i.productId, title:i.title, price:i.price, quantity:i.quantity})), total, status:'pending' }; let orders=DB.get('orders',[]); DB.set('orders',[order,...orders]); // update stock for each product let products=DB.get('products',[]); for(let item of cartItems){ let prod=products.find(p=>p.id===item.productId); if(prod){ prod.stock-=item.quantity; if(prod.stock<0) prod.stock=0; } } DB.set('products',products); localStorage.removeItem('cart'); this.items=[]; this.updateUI(); document.getElementById('thanks-id').innerText=order.id; document.getElementById('thanks-msg').innerText=`Merci ${fn}, nous vous contacterons au ${phone}.`; App.showView('view-thanks'); delete window._checkoutCart; }
 };
 
@@ -267,14 +369,14 @@ const App={
   applySettings(){ let s=DB.get('settings',{}); let nm=s.storeName||'Boutique'; document.getElementById('store-logo').textContent=nm; document.getElementById('hero-title').textContent=s.heroTitle||'Découvrez Notre Collection'; document.getElementById('hero-subtitle').textContent=s.heroSub||''; },
   showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); let el=document.getElementById(id); if(el)el.classList.add('active'); window.scrollTo(0,0); },
   showStore(){ this.applySettings(); this.renderStore(); this.showView('view-store'); },
-  showCheckout(){ let cities=DB.get('cities',[]); let citySel=document.getElementById('ch-city'); citySel.innerHTML='<option value="">— Sélectionnez —</option>'+cities.map(c=>`<option value="${c.id}" data-price="${c.price}">${c.name} (${fmt(c.price)})</option>`).join(''); citySel.onchange=()=>{ let price=citySel.selectedOptions[0]?.dataset.price||0; document.getElementById('cart-delivery-preview').innerHTML=fmt(price); let subtotal=Cart.items.reduce((s,i)=>s+i.price*i.quantity,0); document.getElementById('cart-total-preview').innerHTML=fmt(subtotal+Number(price)); }; let itemsHtml='<div class="order-card"><div class="order-card-title">Votre commande</div>'; let subtotal=0; Cart.items.forEach(i=>{ let tot=i.price*i.quantity; subtotal+=tot; itemsHtml+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:10px 0"><div>${i.title} x${i.quantity}</div><div>${fmt(tot)}</div></div>`; }); itemsHtml+=`<div class="price-row"><span>Sous-total</span><span>${fmt(subtotal)}</span></div><div class="price-row"><span>Livraison</span><span id="ch-delivery-preview">—</span></div><div class="price-row total"><span>Total</span><span id="ch-total-preview">${fmt(subtotal)}</span></div></div>`; document.getElementById('checkout-products').innerHTML=itemsHtml; citySel.dispatchEvent(new Event('change')); this.showView('view-checkout'); },
-  renderStore(){ let prods=DB.get('products',[])||[]; let search=document.getElementById('search-input')?.value.toLowerCase()||''; let activeCat=document.getElementById('active-category')?.dataset?.cat||'all'; let filtered=prods.filter(p=>p.active && (search===''||p.title.toLowerCase().includes(search)||(p.category||'').toLowerCase().includes(search)) && (activeCat==='all'||p.category===activeCat)); let cats=[...new Set(prods.map(p=>p.category).filter(c=>c))]; let catDiv=document.getElementById('categories-list'); if(catDiv) catDiv.innerHTML=`<span class="category-chip ${activeCat==='all'?'active':''}" data-cat="all" onclick="App.filterByCategory('all')">Tous</span>`+cats.map(c=>`<span class="category-chip ${activeCat===c?'active':''}" data-cat="${c}" onclick="App.filterByCategory('${c}')">${c}</span>`).join(''); let grid=document.getElementById('products-grid'); let nop=document.getElementById('no-products'); if(!filtered.length){ grid.innerHTML=''; nop.style.display='block'; return; } nop.style.display='none'; grid.innerHTML=filtered.map(p=>{ let mainImg=p.images?.[0]||''; let out=p.stock<=0; return `<div class="product-card"><div class="card-img-wrap">${mainImg?`<img class="card-img" src="${mainImg}">`:'<div class="card-img-placeholder">📦</div>'}</div><div class="card-body"><div class="card-title">${p.title}</div><div class="card-desc">${p.description||''}</div><div class="card-stock">${p.stock>0?`✅ ${p.stock} en stock`:'❌ Rupture'}</div><div class="card-footer"><div class="card-price">${fmt(p.price)}</div><button class="btn btn-primary btn-sm" ${out?'disabled':''} onclick="Cart.add('${p.id}')">${out?'Indisponible':'Ajouter'}</button></div></div></div>`; }).join(''); },
+  showCheckout(){ Cart.updateCheckoutCities(); let items=window._checkoutCart||[]; let subtotal=items.reduce((s,i)=>s+i.price*i.quantity,0); let itemsHtml='<div class="order-card"><div class="order-card-title">Votre commande</div>'; items.forEach(i=>{ let tot=i.price*i.quantity; itemsHtml+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:10px 0"><div>${i.title} x${i.quantity}</div><div>${fmt(tot)}</div></div>`; }); itemsHtml+=`<div class="price-row"><span>Sous-total</span><span>${fmt(subtotal)}</span></div><div class="price-row"><span>Livraison</span><span id="ch-delivery-preview">—</span></div><div class="price-row total"><span>Total</span><span id="ch-total-preview">${fmt(subtotal)}</span></div></div>`; document.getElementById('checkout-products').innerHTML=itemsHtml; let citySel=document.getElementById('ch-city'); if(citySel) citySel.onchange=()=>{ let price=Number(citySel.selectedOptions[0]?.dataset.price)||0; document.getElementById('ch-delivery-preview').innerHTML=fmt(price); document.getElementById('ch-total-preview').innerHTML=fmt(subtotal+price); if(document.getElementById('cart-delivery-preview')) document.getElementById('cart-delivery-preview').innerHTML=fmt(price); if(document.getElementById('cart-total-preview')) document.getElementById('cart-total-preview').innerHTML=fmt(subtotal+price); }; citySel?.dispatchEvent(new Event('change')); this.showView('view-checkout'); },
+  renderStore(){ let prods=DB.get('products',[])||[]; let search=document.getElementById('search-input')?.value.toLowerCase()||''; let activeCat=document.getElementById('active-category')?.dataset?.cat||'all'; let filtered=prods.filter(p=>p.active && (search===''||p.title.toLowerCase().includes(search)||(p.category||'').toLowerCase().includes(search)) && (activeCat==='all'||p.category===activeCat)); let cats=[...new Set(prods.map(p=>p.category).filter(c=>c))]; let catDiv=document.getElementById('categories-list'); if(catDiv) catDiv.innerHTML=`<span class="category-chip ${activeCat==='all'?'active':''}" data-cat="all" onclick="App.filterByCategory('all')">Tous</span>`+cats.map(c=>`<span class="category-chip ${activeCat===c?'active':''}" data-cat="${c}" onclick="App.filterByCategory('${c}')">${c}</span>`).join(''); let grid=document.getElementById('products-grid'); let nop=document.getElementById('no-products'); if(!filtered.length){ grid.innerHTML=''; nop.style.display='block'; return; } nop.style.display='none'; grid.innerHTML=filtered.map(p=>{ let mainImg=p.images?.[0]||''; let out=p.stock<=0; let stockClass=p.stock>0?'in-stock':'out-stock'; let stockText=p.stock>0?`✅ ${p.stock} en stock`:'❌ Rupture'; return `<div class="product-card"><div class="card-img-wrap">${mainImg?`<img class="card-img" src="${mainImg}">`:'<div class="card-img-placeholder">📦</div>'}</div><div class="card-body"><div class="card-title">${p.title}</div><div class="card-desc">${p.description||''}</div><div class="card-stock ${stockClass}">${stockText}</div><div class="card-footer"><div class="card-price">${fmt(p.price)}</div><button class="btn btn-primary btn-sm" ${out?'disabled':''} onclick="Cart.add('${p.id}')">${out?'Indisponible':'Ajouter'}</button></div></div></div>`; }).join(''); },
   filterByCategory(cat){ let el=document.getElementById('active-category')||document.createElement('span'); el.dataset.cat=cat; this.renderStore(); },
   showTrack(){ this.showView('view-track'); },
-  async trackOrder(){ let query=document.getElementById('track-query').value.trim(); if(!query){ toast('Entrez un numéro de commande ou téléphone','error'); return; } let orders=DB.get('orders',[]); let found=orders.find(o=>o.id===query || o.phone===query); let resultDiv=document.getElementById('track-result'); if(!found){ resultDiv.innerHTML='<div class="empty">Aucune commande trouvée</div>'; return; } let statusText={pending:'En attente',confirmed:'Confirmée',preparing:'Préparation',shipped:'Expédiée',delivered:'Livrée',cancelled:'Annulée'}; resultDiv.innerHTML=`<div class="order-card"><h3>Commande ${found.id}</h3><p><strong>Date:</strong> ${found.date}</p><p><strong>Client:</strong> ${found.customerName}</p><p><strong>Total:</strong> ${fmt(found.total)}</p><p><strong>Statut:</strong> ${statusText[found.status]||found.status}</p><h4>Articles</h4><ul>${(found.items||[{title:found.productTitle,quantity:found.quantity}]).map(i=>`<li>${i.title} x${i.quantity} = ${fmt(i.price*i.quantity)}</li>`).join('')}</ul></div>`; },
+  trackOrder(){ let query=document.getElementById('track-query').value.trim(); if(!query){ toast('Entrez un numéro de commande ou téléphone','error'); return; } let orders=DB.get('orders',[]); let found=orders.find(o=>o.id===query || o.phone===query); let resultDiv=document.getElementById('track-result'); if(!found){ resultDiv.innerHTML='<div class="empty">Aucune commande trouvée</div>'; return; } let statusText={pending:'En attente',confirmed:'Confirmée',preparing:'Préparation',shipped:'Expédiée',delivered:'Livrée',cancelled:'Annulée'}; resultDiv.innerHTML=`<div class="order-card"><h3>Commande ${found.id}</h3><p><strong>Date:</strong> ${found.date}</p><p><strong>Client:</strong> ${found.customerName}</p><p><strong>Total:</strong> ${fmt(found.total)}</p><p><strong>Statut:</strong> ${statusText[found.status]||found.status}</p><h4>Articles</h4><ul>${(found.items||[{title:found.productTitle,quantity:found.quantity,price:found.productPrice}]).map(i=>`<li>${i.title} x${i.quantity} = ${fmt(i.price*i.quantity)}</li>`).join('')}</ul></div>`; },
   showHistory(){ this.showView('view-history'); },
-  showCustomerOrders(){ let phone=document.getElementById('history-phone').value.trim(); if(!phone){ toast('Entrez votre numéro','error'); return; } let orders=DB.get('orders',[]).filter(o=>o.phone===phone).sort((a,b)=>b.date.localeCompare(a.date)); let div=document.getElementById('history-result'); if(!orders.length){ div.innerHTML='<div class="empty">Aucune commande trouvée pour ce numéro</div>'; return; } div.innerHTML=orders.map(o=>`<div class="order-card" style="margin-bottom:16px"><div><strong>${o.id}</strong> – ${o.date}</div><div>Total: ${fmt(o.total)} – Statut: ${o.status}</div><button class="btn btn-secondary btn-sm" onclick="App.trackSingleOrder('${o.id}')">Voir détails</button></div>`).join(''); },
-  trackSingleOrder(id){ document.getElementById('track-query').value=id; this.showTrack(); setTimeout(()=>this.trackOrder(),100); },
+  showCustomerOrders(){ let phone=document.getElementById('history-phone').value.trim(); if(!phone){ toast('Entrez votre numéro','error'); return; } let orders=DB.get('orders',[]).filter(o=>o.phone===phone).sort((a,b)=>b.date.localeCompare(a.date)); let div=document.getElementById('history-result'); if(!orders.length){ div.innerHTML='<div class="empty">Aucune commande trouvée pour ce numéro</div>'; return; } div.innerHTML=orders.map(o=>`<div class="order-card" style="margin-bottom:16px;cursor:pointer" onclick="App.viewOrderDetails('${o.id}')"><div><strong>${o.id}</strong> – ${o.date}</div><div>Total: ${fmt(o.total)} – Statut: ${o.status}</div></div>`).join(''); },
+  viewOrderDetails(id){ let order=DB.get('orders',[]).find(o=>o.id===id); if(!order)return; let items=order.items||[{title:order.productTitle,quantity:order.quantity,price:order.productPrice}]; let html=`<div><strong>${order.id}</strong><br>Date: ${order.date}<br>Client: ${order.customerName}<br>Tél: ${order.phone}<br>Adresse: ${order.address||'-'}<br>Ville: ${order.city}<br><h4>Articles</h4><ul>${items.map(i=>`<li>${i.title} x${i.quantity} = ${fmt(i.price*i.quantity)}</li>`).join('')}</ul><strong>Total: ${fmt(order.total)}</strong><br>Statut: ${order.status}</div>`; document.getElementById('order-detail-content').innerHTML=html; openOv('order-detail-overlay'); },
   goAdmin(){ if(sessionStorage.getItem('adm')) Admin.open(); else this.showView('view-admin-login'); }
 };
 
@@ -283,23 +385,52 @@ const Admin={
   login(){ let pw=document.getElementById('admin-pw-in').value; let s=DB.get('settings',{}); if(pw===(s.adminPW||'admin123')){ sessionStorage.setItem('adm','1'); this.open(); } else toast('Mot de passe incorrect','error'); },
   logout(){ sessionStorage.removeItem('adm'); App.showStore(); },
   open(){ App.showView('view-admin'); this.tab('orders'); this.loadSettings(); },
-  tab(name){ ['orders','products','cities','settings'].forEach(n=>{ let btn=document.getElementById(`tab-btn-${n}`); if(btn)btn.classList.toggle('active',n===name); let panel=document.getElementById(`tab-${n}`); if(panel)panel.classList.toggle('active',n===name); }); if(name==='orders') this.renderOrders(); if(name==='products') this.renderProducts(); if(name==='cities') this.renderCities(); },
-  renderOrders(){ let orders=DB.get('orders',[]); let html=`<div class="table-wrap"><table class="data-table"><thead><tr><th>N°</th><th>Client</th><th>Téléphone</th><th>Total</th><th>Statut</th><th></th></tr></thead><tbody>`; orders.forEach(o=>{ html+=`<tr><td>${o.id}<br><small>${o.date}</small></td><td>${o.customerName}</td><td>${o.phone}</td><td>${fmt(o.total)}</td><td>${o.status}</td><td><button class="btn btn-secondary btn-sm" onclick="Admin.showOrderDetail('${o.id}')">Détails</button></td></tr>`; }); html+=`</tbody></table></div>`; document.getElementById('orders-admin-list').innerHTML=html; },
-  showOrderDetail(id){ let order=DB.get('orders',[]).find(o=>o.id===id); if(!order)return; let items=order.items||[{title:order.productTitle,quantity:order.quantity,price:order.productPrice}]; let html=`<div><p><strong>Commande:</strong> ${order.id}</p><p><strong>Client:</strong> ${order.customerName}</p><p><strong>Téléphone:</strong> ${order.phone}</p><p><strong>Adresse:</strong> ${order.address||'Non précisée'}</p><p><strong>Ville:</strong> ${order.city}</p><p><strong>Date:</strong> ${order.date}</p><h4>Articles</h4><ul>${items.map(i=>`<li>${i.title} x${i.quantity} = ${fmt(i.price*i.quantity)}</li>`).join('')}</ul><p><strong>Total:</strong> ${fmt(order.total)}</p><p><strong>Statut:</strong> <select id="order-status-select">${['pending','confirmed','preparing','shipped','delivered','cancelled'].map(s=>`<option ${order.status===s?'selected':''} value="${s}">${s}</option>`).join('')}</select><button class="btn btn-primary btn-sm" onclick="Admin.updateStatus('${id}')">Mettre à jour</button></p></div>`; document.getElementById('order-detail-content').innerHTML=html; openOv('order-detail-overlay'); },
+  tab(name){ ['orders','products','cities','settings'].forEach(n=>{ let btn=document.querySelector(`.admin-tab[onclick*="${n}"]`); if(btn)btn.classList.toggle('active',n===name); let panel=document.getElementById(`tab-${n}`); if(panel)panel.classList.toggle('active',n===name); }); if(name==='orders') this.renderOrders(); if(name==='products') this.renderProducts(); if(name==='cities') this.renderCities(); },
+  renderOrders(){ let orders=DB.get('orders',[]); let html=`<div class="table-wrap"><table class="data-table"><thead><tr><th>N° commande</th><th>Client</th><th>Téléphone</th><th>Total</th><th>Statut</th><th></th></tr></thead><tbody>`; orders.forEach(o=>{ html+=`<tr><td>${o.id}<br><small>${o.date}</small></td><td>${o.customerName}</td><td>${o.phone}</td><td>${fmt(o.total)}</td><td>${o.status}</td><td><button class="btn btn-secondary btn-sm" onclick="Admin.showOrderDetail('${o.id}')">Détails</button></td></tr>`; }); html+=`</tbody></table></div>`; document.getElementById('orders-admin-list').innerHTML=html; },
+  showOrderDetail(id){ let order=DB.get('orders',[]).find(o=>o.id===id); if(!order)return; let items=order.items||[{title:order.productTitle,quantity:order.quantity,price:order.productPrice}]; let html=`<p><strong>Commande:</strong> ${order.id}</p><p><strong>Client:</strong> ${order.customerName}</p><p><strong>Téléphone:</strong> ${order.phone}</p><p><strong>Adresse:</strong> ${order.address||'Non précisée'}</p><p><strong>Ville:</strong> ${order.city}</p><p><strong>Date:</strong> ${order.date}</p><h4>Articles</h4><ul>${items.map(i=>`<li>${i.title} x${i.quantity} = ${fmt(i.price*i.quantity)}</li>`).join('')}</ul><p><strong>Total:</strong> ${fmt(order.total)}</p><p><strong>Statut:</strong> <select id="order-status-select">${['pending','confirmed','preparing','shipped','delivered','cancelled'].map(s=>`<option ${order.status===s?'selected':''} value="${s}">${s}</option>`).join('')}</select> <button class="btn btn-primary btn-sm" onclick="Admin.updateStatus('${id}')">Mettre à jour</button></p>`; document.getElementById('order-detail-content').innerHTML=html; openOv('order-detail-overlay'); },
   updateStatus(id){ let newStatus=document.getElementById('order-status-select').value; let orders=DB.get('orders',[]); let idx=orders.findIndex(o=>o.id===id); if(idx!==-1){ orders[idx].status=newStatus; DB.set('orders',orders); toast('Statut mis à jour'); closeOv('order-detail-overlay'); this.renderOrders(); } },
-  renderProducts(){ let prods=DB.get('products',[]); let html=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Photo</th><th>Titre</th><th>Prix</th><th>Stock</th><th>Catégorie</th><th>Statut</th><th></th></tr></thead><tbody>`; prods.forEach(p=>{ html+=`<tr><td>${p.images?.[0]?`<img src="${p.images[0]}" style="width:40px;height:40px;border-radius:6px">`:'—'}</td><td>${p.title}</td><td>${fmt(p.price)}</td><td>${p.stock??0}</td><td>${p.category||'-'}</td><td>${p.active?'✅ Actif':'❌ Inactif'}</td><td><button class="btn btn-secondary btn-sm" onclick="Admin.openProductModal('${p.id}')">Modifier</button><button class="btn btn-danger btn-sm" onclick="Admin.deleteProduct('${p.id}')">Supprimer</button></td></tr>`; }); html+=`</tbody></table></div>`; document.getElementById('products-admin-list').innerHTML=html; },
+  renderProducts(){ let prods=DB.get('products',[]); let html=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Photo</th><th>Titre</th><th>Prix</th><th>Stock</th><th>Catégorie</th><th>Statut</th><th></th></tr></thead><tbody>`; prods.forEach(p=>{ html+=`<tr><td>${p.images?.[0]?`<img src="${p.images[0]}" class="tbl-thumb">`:'—'}</td><td>${p.title}</td><td>${fmt(p.price)}</td><td>${p.stock??0}</td><td>${p.category||'-'}</td><td>${p.active?'✅ Actif':'❌ Inactif'}</td><td><button class="btn btn-secondary btn-sm" onclick="Admin.openProductModal('${p.id}')">Modifier</button> <button class="btn btn-danger btn-sm" onclick="Admin.deleteProduct('${p.id}')">Supprimer</button></td></tr>`; }); html+=`</tbody></table></div>`; document.getElementById('products-admin-list').innerHTML=html; },
   openProductModal(id=null){ Imgs.reset(); if(id){ let p=DB.get('products',[]).find(p=>p.id===id); if(p){ document.getElementById('pm-id').value=p.id; document.getElementById('pm-title-field').value=p.title; document.getElementById('pm-price').value=p.price; document.getElementById('pm-stock').value=p.stock||0; document.getElementById('pm-category').value=p.category||''; document.getElementById('pm-desc').value=p.description||''; document.getElementById('pm-active').checked=p.active; Imgs.load(p.images||[]); } } else { document.getElementById('pm-id').value=''; document.getElementById('pm-title-field').value=''; document.getElementById('pm-price').value=''; document.getElementById('pm-stock').value=0; document.getElementById('pm-category').value=''; document.getElementById('pm-desc').value=''; document.getElementById('pm-active').checked=true; Imgs.reset(); } openOv('product-overlay'); },
   saveProduct(){ let id=document.getElementById('pm-id').value; let title=document.getElementById('pm-title-field').value.trim(); if(!title){ toast('Titre requis','error'); return; } let price=parseFloat(document.getElementById('pm-price').value); if(isNaN(price)){ toast('Prix invalide','error'); return; } let stock=parseInt(document.getElementById('pm-stock').value)||0; let category=document.getElementById('pm-category').value.trim(); let desc=document.getElementById('pm-desc').value; let active=document.getElementById('pm-active').checked; let prod={ id:id||'p_'+uid(), title, price, stock, category, description:desc, images:Imgs.get(), active, rating:5 }; let prods=DB.get('products',[]); if(id) prods=prods.map(p=>p.id===id?prod:p); else prods.push(prod); DB.set('products',prods); closeOv('product-overlay'); this.renderProducts(); App.renderStore(); toast(id?'Produit modifié':'Produit ajouté'); },
   deleteProduct(id){ if(confirm('Supprimer ?')){ DB.set('products',DB.get('products',[]).filter(p=>p.id!==id)); this.renderProducts(); App.renderStore(); } },
-  renderCities(){ let cities=DB.get('cities',[]); let html=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Ville</th><th>Frais</th><th></th></tr></thead><tbody>`; cities.forEach(c=>{ html+=`<tr><td>${c.name}</td><td>${fmt(c.price)}</td><td><button class="btn btn-secondary btn-sm" onclick="Admin.openCityModal('${c.id}')">Modifier</button><button class="btn btn-danger btn-sm" onclick="Admin.deleteCity('${c.id}')">Supprimer</button></td></tr>`; }); html+=`</tbody></table></div>`; document.getElementById('cities-admin-list').innerHTML=html; },
+  renderCities(){ let cities=DB.get('cities',[]); let html=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Ville</th><th>Frais de livraison</th><th></th></tr></thead><tbody>`; cities.forEach(c=>{ html+=`<tr><td>${c.name}</td><td>${fmt(c.price)}</td><td><button class="btn btn-secondary btn-sm" onclick="Admin.openCityModal('${c.id}')">Modifier</button> <button class="btn btn-danger btn-sm" onclick="Admin.deleteCity('${c.id}')">Supprimer</button></td></tr>`; }); html+=`</tbody></table></div>`; document.getElementById('cities-admin-list').innerHTML=html; },
   openCityModal(id=null){ if(id){ let c=DB.get('cities',[]).find(c=>c.id===id); if(c){ document.getElementById('cm-id').value=c.id; document.getElementById('cm-name').value=c.name; document.getElementById('cm-price').value=c.price; } } else { document.getElementById('cm-id').value=''; document.getElementById('cm-name').value=''; document.getElementById('cm-price').value=''; } openOv('city-overlay'); },
-  saveCity(){ let id=document.getElementById('cm-id').value; let name=document.getElementById('cm-name').value.trim(); let price=parseFloat(document.getElementById('cm-price').value); if(!name||isNaN(price)){ toast('Nom et prix requis','error'); return; } let city={ id:id||'c_'+uid(), name, price }; let cities=DB.get('cities',[]); if(id) cities=cities.map(c=>c.id===id?city:c); else cities.push(city); DB.set('cities',cities); closeOv('city-overlay'); this.renderCities(); toast('Ville enregistrée'); },
+  saveCity(){ let id=document.getElementById('cm-id').value; let name=document.getElementById('cm-name').value.trim(); let price=parseFloat(document.getElementById('cm-price').value); if(!name||isNaN(price)){ toast('Nom et prix requis','error'); return; } let city={ id:id||'c_'+uid(), name, price }; let cities=DB.get('cities',[]); if(id) cities=cities.map(c=>c.id===id?city:c); else cities.push(city); DB.set('cities',cities); closeOv('city-overlay'); this.renderCities(); Cart.updateCheckoutCities(); toast('Ville enregistrée'); },
   deleteCity(id){ if(confirm('Supprimer ?')){ DB.set('cities',DB.get('cities',[]).filter(c=>c.id!==id)); this.renderCities(); } },
   loadSettings(){ let s=DB.get('settings',{}); document.getElementById('s-name').value=s.storeName||''; document.getElementById('s-currency').value=s.currency||'DZD'; let fc=localStorage.getItem('firebase_config'); if(fc) document.getElementById('s-fb-config').value=fc; setFBStatus(FireSync.ok()?'connected':'disconnected'); },
   saveStore(){ let s=DB.get('settings',{}); s.storeName=document.getElementById('s-name').value.trim()||'Boutique'; s.currency=document.getElementById('s-currency').value.trim()||'DZD'; DB.set('settings',s); App.applySettings(); toast('Paramètres sauvegardés'); },
   async connectFirebase(){ let raw=document.getElementById('s-fb-config').value.trim(); if(!raw){ toast('Collez la config Firebase','error'); return; } let config; try{ config=JSON.parse(raw); }catch(e){ toast('Format JSON invalide','error'); return; } let ok=await FireSync.setup(config); if(ok){ localStorage.setItem('firebase_config',JSON.stringify(config)); await FireSync.migrateFromLocal?.(); setupListeners(); setFBStatus('connected'); toast('Firebase connecté'); } else toast('Erreur connexion','error'); }
 };
-async function start(){ if(!DB.getLocal('s4')){ DB.set('products',[{id:'p1',title:'Sac à dos',price:3500,stock:10,category:'Accessoires',description:'Sac pratique',images:[],active:true,rating:5}]); DB.set('cities',[{id:'c1',name:'Alger',price:400},{id:'c2',name:'Oran',price:350}]); DB.set('settings',{storeName:'Boutique',currency:'DZD',adminPW:'admin123'}); DB.set('orders',[]); DB.set('s4',true); } let savedConfig=DB.getLocal('firebase_config'); if(savedConfig){ let ok=await FireSync.setup(savedConfig); if(ok){ await FireSync.migrateFromLocal?.(); setupListeners(); setFBStatus('connected'); } } App.init(); }
+
+// ========== STARTUP ==========
+async function start(){ 
+  if(!DB.getLocal('s4')){ 
+    DB.set('products',[{id:'p1',title:'Sac à dos',price:3500,stock:10,category:'Accessoires',description:'Sac pratique et élégant',images:[],active:true,rating:5},
+                        {id:'p2',title:'Montre connectée',price:8900,stock:5,category:'Électronique',description:'Montre intelligente',images:[],active:true,rating:5}]); 
+    DB.set('cities',[{id:'c1',name:'Alger',price:400},{id:'c2',name:'Oran',price:350}]); 
+    DB.set('settings',{storeName:'Boutique',currency:'DZD',adminPW:'admin123',heroTitle:'Découvrez Notre Collection',heroSub:'Des produits soigneusement sélectionnés'}); 
+    DB.set('orders',[]); 
+    DB.set('s4',true); 
+  } 
+  let savedConfig=DB.getLocal('firebase_config'); 
+  if(savedConfig && savedConfig.databaseURL){ 
+    let ok=await FireSync.setup(savedConfig); 
+    if(ok){ 
+      await FireSync.migrateFromLocal?.(); 
+      setupListeners(); 
+      setFBStatus('connected'); 
+    } 
+  } else if(EMBEDDED_FIREBASE_CONFIG && EMBEDDED_FIREBASE_CONFIG.databaseURL){ 
+    let ok=await FireSync.setup(EMBEDDED_FIREBASE_CONFIG); 
+    if(ok){ 
+      localStorage.setItem('firebase_config',JSON.stringify(EMBEDDED_FIREBASE_CONFIG)); 
+      await FireSync.migrateFromLocal?.(); 
+      setupListeners(); 
+      setFBStatus('connected'); 
+    } 
+  } 
+  App.init(); 
+}
 start();
 </script>
 </body>
